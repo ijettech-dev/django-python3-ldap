@@ -115,5 +115,15 @@ class LazySettings(object):
         default = None,
     )
 
+    # --------------------------------------------------------------------------
+    # iJet Addition
+    # Explicitly declare the LDAP binding mode.  If this value is not None,
+    # it will override the LDAP_AUTH_USE_TLS setting.
+    LDAP_AUTO_BIND = LazySetting(
+        name = "LDAP_AUTO_BIND",
+        default = None,
+    )
+    # --------------------------------------------------------------------------
+
 
 settings = LazySettings(settings)

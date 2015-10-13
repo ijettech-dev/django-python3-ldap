@@ -147,13 +147,19 @@ def connection(*args, **kwargs):
         username_dn = settings.LDAP_AUTH_CONNECTION_USERNAME
         password = settings.LDAP_AUTH_CONNECTION_PASSWORD
     # Make the connection.
-    if user_identifier:
-        if settings.LDAP_AUTH_USE_TLS:
-            auto_bind = ldap3.AUTO_BIND_TLS_BEFORE_BIND
+    # --------------------------------------------------------------------------
+    # iJet changes here to support explicit auto bind override.
+    if settings.LDAP_AUTO_BIND is None:
+        if user_identifier:
+            if settings.LDAP_AUTH_USE_TLS:
+                auto_bind = ldap3.AUTO_BIND_TLS_BEFORE_BIND
+            else:
+                auto_bind = ldap3.AUTO_BIND_NO_TLS
         else:
-            auto_bind = ldap3.AUTO_BIND_NO_TLS
+            auto_bind = ldap3.AUTO_BIND_NONE
     else:
-        auto_bind = ldap3.AUTO_BIND_NONE
+        auto_bind = settings.LDAP_AUTO_BIND
+    # --------------------------------------------------------------------------
     try:
         with ldap3.Connection(ldap3.Server(settings.LDAP_AUTH_URL), user=username_dn, password=password, auto_bind=auto_bind) as c:
             yield Connection(c)
